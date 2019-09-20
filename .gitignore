@@ -1,0 +1,8 @@
+logs/
+.idea/
+full-stack/
+*.log
+*.tar.gz
+*.tgz
+*.gz
+*.zip

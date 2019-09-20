@@ -1,0 +1,123 @@
+version: "3.0"
+
+services:
+
+
+  tests:
+    build:
+      context: ./
+    volumes:
+      - ./:/nis-test
+      #- ./tests/external:/nis-test/pytest/external
+      #- ./logs/tests:/nis-test/logs
+      - ./logs:/logs
+    networks:
+      - nis_net
+
+  redis:
+    image: 'bitnami/redis:latest'
+    environment:
+      - REDIS_PASSWORD=redis123
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ../data/redis:/data
+    restart: always
+    networks:
+      - nis_net
+
+  zoo1:
+    image: confluentinc/cp-zookeeper:latest
+    restart: always
+    ports:
+      - "2181:2181"
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_PORT: 2181
+      #ZOO_SERVERS: server.1=zoo1:2888:3888
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: "2181"
+      ZOOKEEPER_TICK_TIME: "2000"
+      ZOOKEEPER_SERVERS: "zoo1:22888:23888"
+    networks:
+      - nis_net
+
+
+  kafka1:
+    image: confluentinc/cp-kafka:latest
+    hostname: kafka1
+    ports:
+      - "9092:9092"
+    environment:
+      # add the entry "127.0.0.1    kafka1" to your /etc/hosts file
+      KAFKA_DELETE_TOPIC_ENABLE: "true"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka1:9092"
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181"
+      KAFKA_BROKER_ID: 1
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_SCHEMA_REGISTRY_URL: "schemaregistry:8081"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_MESSAGE_MAX_BYTES: 150000000
+      KAFKA_FETCH_MESSAGE_MAX_BYTES: 15000000
+      KAFKA_REPLICA_FETCH_MAX_BYTES: 15000000
+      KAFKA_MAX_MESSAGE_BYTES: 15000000
+    volumes:
+      - ./full-stack/kafka1/data:/var/lib/kafka/data
+      - ./producer.properties:/etc/kafka/producer.properties
+    depends_on:
+      - zoo1
+    networks:
+      - nis_net
+
+
+  kafka-schema-registry:
+    image: confluentinc/cp-schema-registry:latest
+    restart: always
+    depends_on:
+      - zoo1
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: "zoo1:2181"
+      SCHEMA_REGISTRY_HOST_NAME: kafka-schema-registry
+      SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
+    ports:
+      - "8081:8081"
+    networks:
+      - nis_net
+
+  kafka-topics-ui:
+    image: landoop/kafka-topics-ui:latest
+    hostname: kafka-topics-ui
+    ports:
+      - "8010:8000"
+    environment:
+      KAFKA_REST_PROXY_URL: "http://kafka-rest-proxy:8082/"
+      PROXY: "true"
+    depends_on:
+      - zoo1
+      - kafka1
+    networks:
+      - nis_net
+
+  kafka-rest-proxy:
+    image: confluentinc/cp-kafka-rest:latest
+    hostname: kafka-rest-proxy
+    ports:
+      - "8082:8082"
+    environment:
+      KAFKA_REST_ZOOKEEPER_CONNECT: zoo1:2181
+      KAFKA_REST_LISTENERS: http://0.0.0.0:8082/
+      KAFKA_REST_SCHEMA_REGISTRY_URL: http://kafka-schema-registry:8081/
+      KAFKA_REST_HOST_NAME: kafka-rest-proxy
+      KAFKA_REST_BOOTSTRAP_SERVERS: kafka1:9092
+    depends_on:
+      - zoo1
+      - kafka1
+      - kafka-schema-registry
+    networks:
+      - nis_net
+
+networks:
+  nis_net:
+    driver: bridge
