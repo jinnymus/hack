@@ -1,6 +1,9 @@
 package com.hack.validator.model;
 
-public class File {
+import org.apache.avro.Schema;
+import org.apache.avro.specific.SpecificRecordBase;
+
+public class File extends SpecificRecordBase {
 
     private Long timePlatform;
     private Long timeDevice;
@@ -42,4 +45,20 @@ public class File {
         this.image = image;
         return this;
     }
+
+    @Override
+    public Schema getSchema() {
+        return null;
+    }
+
+    @Override
+    public Object get(int i) {
+        return null;
+    }
+
+    @Override
+    public void put(int i, Object o) {
+
+    }
+
 }

@@ -25,7 +25,7 @@ config = {
     'db_port': 6379,
     'db_id' : 1,
     'db_pwd': 'redis123',
-    'topic' : 'ru.nis.idg.terminal.validData.smartFarm',
+    'topic' : 'file-topic',
 }
 
 schemaSF = '''{
@@ -67,7 +67,74 @@ schemaSF = '''{
               ]
             }'''
 
-rawData2 = {"term_id": 101, "time_platform": 1527685363267, "time_device": 1527685363266, "activity_info": 300 }
+schemaSF2 = '''{
+              "type":"record",
+              "name":"File",
+              "namespace":"com.hack.validator.model",
+              "fields":[
+                {
+                  "name": "time_platform",
+                  "type": {
+                    "type": "long",
+                    "logicalType": "timestamp-millis"
+                  }, 
+                  "default" : "NONE"
+                },
+                {
+                  "name": "time_device",
+                  "type": {
+                    "type": "long",
+                    "logicalType": "timestamp-millis"
+                  }, 
+                  "default" : "NONE"
+                },
+                {
+                  "name": "activity_info",
+                  "type": "int", 
+                  "default" : "NONE"
+                },
+                {
+                  "name": "image",
+                  "type": "bytes", 
+                  "default" : "NONE"
+                }
+              ]
+            }'''
+
+schemaSF3 = '''{
+  "type": "record",
+  "name": "File",
+  "namespace": "com.hack.validator.model",
+  "fields": [
+    {
+      "name": "timePlatform",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+    "default" : 1
+    },
+    {
+      "name": "timeDevice",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+    "default" : 1
+    },
+    {
+      "name": "activityInfo",
+      "type": "int",
+      "default" : 1
+    },
+    {
+      "name": "image",
+      "type": "bytes"
+    }
+  ]
+}'''
+
+rawData2 = {"timePlatform": 1527685363267, "timeDevice": 1527685363266, "activityInfo": 300, "image": "test" }
 
 
 logging.basicConfig(level=logging.INFO)
@@ -78,7 +145,7 @@ consumer = KafkaConsumer(bootstrap_servers=config.get('kafka_server') + ":" + co
                          consumer_timeout_ms=1000)
 schema_registry = CachedSchemaRegistryClient(url='http://' + config.get('kafka_schema') + ':' + config.get('kafka_schema_port'))
 serializer = MessageSerializer(schema_registry)
-value_schema = avro.loads(schemaSF)
+value_schema = avro.loads(schemaSF3)
 avroProducer = AvroProducer({
     'bootstrap.servers': config.get('kafka_server'),
     'schema.registry.url': 'http://' + config.get('kafka_schema') + ':' + config.get('kafka_schema_port'),
@@ -184,8 +251,9 @@ def generateMessagesSmall():
 
     '''
     log.info("[generateMessagesSmall] start")
-    for i in xrange(10000):
-        rawData2['term_id'] = i
+    for i in xrange(10):
+        # rawData2['term_id'] = i
+        log.info("[generateMessagesSmall] rawData2: " + str(rawData2))
         sendKafka(rawData2)
     log.info("[generateMessagesSmall] end")
     print("[generateMessagesSmall] flush --- %s seconds ---" % (time.time() - start_time))
@@ -283,10 +351,10 @@ def testGenerateMessages():
     '''
     delete_topic(config.get('topic'))
     print("[generateMessagesSmall] --- %s seconds ---" % (time.time() - start_time))
-    generateMessagesBig()
+    generateMessagesSmall()
     print("[get_last_offset] --- %s seconds ---" % (time.time() - start_time))
     get_last_offset()
 
 
 testGenerateMessages()
-testGetMessages()
+#testGetMessages()

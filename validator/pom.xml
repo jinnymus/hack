@@ -10,12 +10,15 @@
     </parent>
     <groupId>com.hack</groupId>
     <artifactId>hack-validator</artifactId>
+    <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <name>hack-validator</name>
     <description>hack-validator</description>
 
     <properties>
         <java.version>11</java.version>
+<!--        <maven.compiler.source>1.6</maven.compiler.source>-->
+<!--        <maven.compiler.target>1.6</maven.compiler.target>-->
     </properties>
 
     <dependencies>
@@ -92,6 +95,7 @@
     </repositories>
 
     <build>
+        <finalName>hack-validator</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -111,12 +115,15 @@
                             <goal>idl-protocol</goal>
                         </goals>
                         <configuration>
-                            <sourceDirectory>${project.basedir}/src/main/resources/</sourceDirectory>
-                            <outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
+                            <sourceDirectory>${project.basedir}/src/main/resources/avro/</sourceDirectory>
+                            <outputDirectory>${project.basedir}/src/main/java2/</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+
+
+
         </plugins>
     </build>
 

@@ -14,6 +14,28 @@ services:
     networks:
       - nis_net
 
+  validator:
+    build:
+      context: validator
+    volumes:
+      - ./logs/generator:/tmp
+    networks:
+      - nis_net
+    depends_on:
+      - kafka1
+      - kafka-schema-registry
+
+  schema-registry-ui:
+    image: landoop/schema-registry-ui:latest
+    hostname: kafka-schema-registry-ui
+    ports:
+      - "8001:8000"
+    environment:
+      SCHEMAREGISTRY_URL: http://kafka-schema-registry:8081/
+      PROXY: "true"
+    depends_on:
+      - kafka-schema-registry
+
   redis:
     image: 'bitnami/redis:latest'
     environment:
@@ -78,9 +100,11 @@ services:
     depends_on:
       - zoo1
     environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "PLAINTEXT://kafka1:9092"
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: "zoo1:2181"
       SCHEMA_REGISTRY_HOST_NAME: kafka-schema-registry
       SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
+      PROXY: "true"
     ports:
       - "8081:8081"
     networks:
