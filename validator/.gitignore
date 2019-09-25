@@ -4,6 +4,8 @@ target/
 !**/src/main/**
 !**/src/test/**
 
+/src/main/java/com/hack/validator/model/**
+
 ### STS ###
 .apt_generated
 .classpath
