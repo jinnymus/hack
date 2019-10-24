@@ -1,4 +1,5 @@
 spring:
+  port: 8081
   kafka:
     bootstrap-servers: 45.12.236.20:9093,45.12.236.21:9093,45.12.236.34:9093
     client-id: ${random.uuid}
@@ -12,6 +13,7 @@ spring:
           destination: input
           content-type: application/text
           group: team3developer
+          concurrency: 30
         output:
           destination: team3-test-output
           content-type: text/plain
