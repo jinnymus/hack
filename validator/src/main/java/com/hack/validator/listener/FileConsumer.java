@@ -1,18 +1,30 @@
 package com.hack.validator.listener;
 
+import org.liba2.Duplicator;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Processor;
-import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 
 @Component
 public class FileConsumer {
 
-    //@KafkaListener(topics = Processor.INPUT)
+    private Duplicator duplicator;
+
     @StreamListener(value = Processor.INPUT)
-    public void consume(String file) {
+    @SendTo(value = Processor.OUTPUT)
+    public String consume(String file) {
         System.out.println("Received: " + file);
+        //if (duplicator.isDuplicated(file)) {
+        //    return null;
+        //}
+        return file;
     }
 
-
+    @PostConstruct
+    private void postConstruct() {
+        duplicator = new Duplicator();
+    }
 }
