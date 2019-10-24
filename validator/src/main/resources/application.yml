@@ -13,8 +13,8 @@ spring:
           content-type: application/text
           group: team3developer
         output:
-          destination: output
-          content-type: application/text
+          destination: team3-test-output
+          content-type: text/plain
       kafka:
         binder:
           configuration:
@@ -27,8 +27,8 @@ spring:
             ssl.key.password: LVe823ycKzdQ
             ssl.endpoint.identification.algorithm:
           producer-properties:
-            key.serializer: org.apache.kafka.common.serialization.StringSerializer
-            value.serializer: org.apache.kafka.common.serialization.StringSerializer
+            key.serializer: org.springframework.cloud.stream.converter.ObjectStringMessageConverter
+            value.serializer: org.springframework.cloud.stream.converter.ObjectStringMessageConverter
           consumer-properties:
             key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
             value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
