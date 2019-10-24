@@ -1,6 +1,6 @@
 package com.hack.validator.listener;
 
-import org.liba2.Duplicator;
+import com.hack.validator.liba2.Duplicator;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.messaging.handler.annotation.SendTo;

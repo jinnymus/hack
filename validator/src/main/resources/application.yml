@@ -19,10 +19,10 @@ spring:
         binder:
           configuration:
             security.protocol: SSL
-            ssl.truststore.location: C:\\team3developer.jks
+            ssl.truststore.location: team3developer.jks
             ssl.truststore.password: LVe823ycKzdQ
             ssl.truststore.type: JKS
-            ssl.keystore.location: C:\\team3developer.jks
+            ssl.keystore.location: team3developer.jks
             ssl.keystore.password: LVe823ycKzdQ
             ssl.key.password: LVe823ycKzdQ
             ssl.endpoint.identification.algorithm:
