@@ -59,6 +59,13 @@
             <version>2.2.1.RELEASE</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.liba2</groupId>
+            <artifactId>liba2</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/liba2-1.0-SNAPSHOT.jar</systemPath>
+        </dependency>
         <!-- LOGGING -->
         <!-- Logback dependencies -->
         <dependency>
