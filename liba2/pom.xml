@@ -13,6 +13,9 @@
 
         <maven.compiler.source>13</maven.compiler.source>
         <maven.compiler.target>13</maven.compiler.target>
+
+        <logback.version>1.2.3</logback.version>
+        <prometheus.version>0.8.0</prometheus.version>
     </properties>
 
     <dependencies>
@@ -40,26 +43,40 @@
         <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient</artifactId>
-            <version>0.8.0</version>
+            <version>${prometheus.version}</version>
         </dependency>
-        <!-- Hotspot JVM metrics-->
         <dependency>
             <groupId>io.prometheus</groupId>
-            <artifactId>simpleclient_hotspot</artifactId>
-            <version>0.8.0</version>
+            <artifactId>simpleclient_dropwizard</artifactId>
+            <version>${prometheus.version}</version>
         </dependency>
-        <!-- Exposition HTTPServer-->
         <dependency>
             <groupId>io.prometheus</groupId>
-            <artifactId>simpleclient_httpserver</artifactId>
-            <version>0.8.0</version>
+            <artifactId>simpleclient_servlet</artifactId>
+            <version>${prometheus.version}</version>
         </dependency>
-        <!-- Pushgateway exposition-->
+
         <dependency>
-            <groupId>io.prometheus</groupId>
-            <artifactId>simpleclient_pushgateway</artifactId>
-            <version>0.8.0</version>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-core</artifactId>
+            <version>${prometheus.version}</version>
         </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>ch.qos.logback</groupId>-->
+<!--            <artifactId>logback-classic</artifactId>-->
+<!--            <version>${logback.version}</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>ch.qos.logback</groupId>-->
+<!--            <artifactId>logback-core</artifactId>-->
+<!--            <version>${logback.version}</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>ch.qos.logback</groupId>-->
+<!--            <artifactId>logback-access</artifactId>-->
+<!--            <version>${logback.version}</version>-->
+<!--        </dependency>-->
 
     </dependencies>
 

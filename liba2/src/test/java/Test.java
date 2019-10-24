@@ -8,7 +8,7 @@ public class Test {
     public void test() {
         Duplicator duplicator = new Duplicator();
 
-        IntStream.range(1, 5000)
+        IntStream.range(1, 10000)
                 .parallel()
                 .forEach(i -> duplicator.isDuplicated("sad"));
     }
