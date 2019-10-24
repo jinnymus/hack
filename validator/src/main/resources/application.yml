@@ -27,8 +27,10 @@ spring:
             ssl.key.password: LVe823ycKzdQ
             ssl.endpoint.identification.algorithm:
           producer-properties:
-            key.serializer: org.springframework.cloud.stream.converter.ObjectStringMessageConverter
-            value.serializer: org.springframework.cloud.stream.converter.ObjectStringMessageConverter
+           # key.serializer: org.apache.kafka.common.serialization.StringSerializer
+            key.serializer: com.hack.validator.serializer.JavaSerializer
+            key.serializer.encoding: UTF8
+            value.serializer: com.hack.validator.serializer.JavaSerializer
           consumer-properties:
             key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
             value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
