@@ -1,26 +1,26 @@
 spring:
   kafka:
     bootstrap-servers: kafka1:9092
-    client-id: 1
+    client-id: ${random.uuid}
+    group.id: file-consumer-group
     consumer:
-      group-id: file-consumer-group
+      group.id: file-consumer-group
   cloud:
     stream:
       bindings:
         input:
           destination: file-topic
-          content-type: application/*+avro
+          content-type: application/text
+          group: file-consumer-group
         output:
           destination: file-topic-non-dup
-          content-type: application/*+avro
+          content-type: application/text
       kafka:
         binder:
           producer-properties:
-            key.serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
-            value.serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
-            schema.registry.url: http://kafka-schema-registry:8081
+            key.serializer: org.apache.kafka.common.serialization.StringSerializer
+            value.serializer: org.apache.kafka.common.serialization.StringSerializer
           consumer-properties:
-            key.deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-            value.deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-            schema.registry.url: http://kafka-schema-registry:8081
-            specific.avro.reader: true
+            key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            group.id: file-consumer-group

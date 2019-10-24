@@ -134,7 +134,7 @@ schemaSF3 = '''{
   ]
 }'''
 
-rawData2 = {"timePlatform": 1527685363267, "timeDevice": 1527685363266, "activityInfo": 300, "image": "test" }
+rawData2 = {"timePlatform": 1527685363267, "timeDevice": 1527685363266, "activityInfo": 303, "image": "test" }
 
 
 logging.basicConfig(level=logging.INFO)
@@ -143,14 +143,15 @@ r = redis.StrictRedis(host=config.get('db_host'), port=config.get('db_port'), db
 consumer = KafkaConsumer(bootstrap_servers=config.get('kafka_server') + ":" + config.get('kafka_port'),
                          auto_offset_reset='earliest',
                          consumer_timeout_ms=1000)
-schema_registry = CachedSchemaRegistryClient(url='http://' + config.get('kafka_schema') + ':' + config.get('kafka_schema_port'))
-serializer = MessageSerializer(schema_registry)
-value_schema = avro.loads(schemaSF3)
-avroProducer = AvroProducer({
-    'bootstrap.servers': config.get('kafka_server'),
-    'schema.registry.url': 'http://' + config.get('kafka_schema') + ':' + config.get('kafka_schema_port'),
-    'message.max.bytes': 15000000
-}, default_value_schema=value_schema)
+# schema_registry = CachedSchemaRegistryClient(url='http://' + config.get('kafka_schema') + ':' + config.get('kafka_schema_port'))
+# serializer = MessageSerializer(schema_registry)
+# value_schema = avro.loads(schemaSF3)
+# avroProducer = AvroProducer({
+#     'bootstrap.servers': config.get('kafka_server'),
+#     'schema.registry.url': 'http://' + config.get('kafka_schema') + ':' + config.get('kafka_schema_port'),
+#     'message.max.bytes': 15000000
+# }, default_value_schema=value_schema)
+producer = KafkaProducer(bootstrap_servers=config.get('kafka_server') + ':9092')
 
 start_time = time.time()
 #device_time_device = 1530523171000
@@ -251,15 +252,25 @@ def generateMessagesSmall():
 
     '''
     log.info("[generateMessagesSmall] start")
-    for i in xrange(10):
+    for i in xrange(20000):
         # rawData2['term_id'] = i
         log.info("[generateMessagesSmall] rawData2: " + str(rawData2))
         sendKafka(rawData2)
     log.info("[generateMessagesSmall] end")
     print("[generateMessagesSmall] flush --- %s seconds ---" % (time.time() - start_time))
-    avroProducer.flush()
+    producer.flush()
     print("[generateMessagesSmall] --- %s seconds ---" % (time.time() - start_time))
 
+def sendKafkaAvro(msg):
+    '''
+
+    Send message to topic
+
+    '''
+
+    #res = avroProducer.produce(topic=config.get('topic'), value=msg)
+    log.debug("[KafkaDriver][send] produce result: " + str(res))
+    #time.sleep(1)
 
 def sendKafka(msg):
     '''
@@ -267,8 +278,9 @@ def sendKafka(msg):
     Send message to topic
 
     '''
-    res = avroProducer.produce(topic=config.get('topic'), value=msg)
-    log.debug("[KafkaDriver][send] produce result: " + str(res))
+    log.debug("[sendKafka][send] msg: " + str(msg))
+    res = producer.send(config.get('topic'), key=None, value=str(msg))
+    log.debug("[sendKafka][send] produce result: " + str(res))
     #time.sleep(1)
 
 def getMessages():
@@ -349,7 +361,7 @@ def testGenerateMessages():
     Testing generating messages
 
     '''
-    delete_topic(config.get('topic'))
+    #delete_topic(config.get('topic'))
     print("[generateMessagesSmall] --- %s seconds ---" % (time.time() - start_time))
     generateMessagesSmall()
     print("[get_last_offset] --- %s seconds ---" % (time.time() - start_time))

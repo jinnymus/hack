@@ -1,0 +1,33 @@
+version: "3.0"
+
+services:
+
+
+  tests:
+    build:
+      context: ./
+    volumes:
+      - ./:/nis-test
+      #- ./tests/external:/nis-test/pytest/external
+      #- ./logs/tests:/nis-test/logs
+      - ./logs:/logs
+    networks:
+      - nis_net
+
+#  scylla-manager:
+#    image: scylladb/scylla-manager
+#    container_name: scylla-manager
+#    depends_on:
+#      - scylla-manager-db
+#    networks:
+#      - nis_net
+#
+#  scylla-manager-db:
+#    image: scylladb/scylla
+#    container_name: scylla-manager-db
+#    networks:
+#      - nis_net
+
+networks:
+  nis_net:
+    driver: bridge

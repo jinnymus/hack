@@ -47,7 +47,7 @@ RUN pip install xxhash
 
 RUN mkdir /nis-test
 
-COPY ./src /nis-test
+COPY src /nis-test
 
 RUN ls -la /nis-test
 

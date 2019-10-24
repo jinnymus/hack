@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-container="validator"
+container=$1
 echo 'container: '$container
 container_id=`docker ps -a | grep $container | awk '{print $1}'`
 image_id=`docker images | grep $container | awk '{print $3}'`
