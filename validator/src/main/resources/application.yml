@@ -1,26 +1,35 @@
 spring:
   kafka:
-    bootstrap-servers: kafka1:9092
+    bootstrap-servers: 45.12.236.20:9093,45.12.236.21:9093,45.12.236.34:9093
     client-id: ${random.uuid}
-    group.id: file-consumer-group
+    group.id: team3developer
     consumer:
-      group.id: file-consumer-group
+      group.id: team3developer
   cloud:
     stream:
       bindings:
         input:
-          destination: file-topic
+          destination: input
           content-type: application/text
-          group: file-consumer-group
+          group: team3developer
         output:
-          destination: file-topic-non-dup
+          destination: output
           content-type: application/text
       kafka:
         binder:
+          configuration:
+            security.protocol: SSL
+            ssl.truststore.location: C:\\team3developer.jks
+            ssl.truststore.password: LVe823ycKzdQ
+            ssl.truststore.type: JKS
+            ssl.keystore.location: C:\\team3developer.jks
+            ssl.keystore.password: LVe823ycKzdQ
+            ssl.key.password: LVe823ycKzdQ
+            ssl.endpoint.identification.algorithm:
           producer-properties:
             key.serializer: org.apache.kafka.common.serialization.StringSerializer
             value.serializer: org.apache.kafka.common.serialization.StringSerializer
           consumer-properties:
             key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
             value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-            group.id: file-consumer-group
+            group.id: team3developer
